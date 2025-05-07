@@ -1,0 +1,29 @@
+
+{
+  "expo": {
+    "name": "Doctor+",
+    "slug": "Doctor+",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/Main/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/Main/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/Main/icon.svg",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "./assets/Main/icon.png"
+    }
+  }
+}
