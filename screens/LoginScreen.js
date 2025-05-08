@@ -11,16 +11,7 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-// import Arrow from "../assets/Main/arrow.svg"; // Corrected import
-// import { ArrowLeft } from 'lucide-react-native'; // Removed problematic import
-import { Svg, Path } from "react-native-svg"; // Added for custom SVG icon
-
-const countryFlags = [
-  { name: "English", code: "gb", emoji: "🇬🇧" },
-  { name: "Deutsch", code: "de", emoji: "🇩🇪" },
-  { name: "Polski", code: "pl", emoji: "🇵🇱" },
-  { name: "Україна", code: "ua", emoji: "🇺🇦" },
-];
+import { Svg, Path } from "react-native-svg";
 
 const languages = [
   { name: "English", code: "en", emoji: "🇬🇧" },
@@ -29,26 +20,20 @@ const languages = [
   { name: "Українська", code: "ua", emoji: "🇺🇦" },
 ];
 
-const RegisterScreen = () => {
+const LoginScreen = () => {
   const navigation = useNavigation();
-  const [country, setCountry] = useState(null);
-  const [isCountryModalVisible, setIsCountryModalVisible] = useState(false);
-  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
+
   const [language, setLanguage] = useState(languages[3]); // Default to Ukrainian
   const [isLanguageModalVisible, setIsLanguageModalVisible] = useState(false);
 
-  const handleRegistration = () => {
-    console.log("Реєстрація:", { country, fullName, email, phone, language });
-  };
-
-  const openCountryModal = () => {
-    setIsCountryModalVisible(true);
-  };
-
-  const closeCountryModal = () => {
-    setIsCountryModalVisible(false);
+  const handleLogin = () => {
+    console.log("Вхід:", { email, password, language });
+    // Тут має бути логіка для відправки даних на сервер і обробки відповіді
+    // Після успішного входу, наприклад, можна перенаправити користувача на інший екран
+    // navigation.navigate("Profile");
   };
 
   const openLanguageModal = () => {
@@ -59,11 +44,6 @@ const RegisterScreen = () => {
     setIsLanguageModalVisible(false);
   };
 
-  const selectCountry = (selectedCountry) => {
-    setCountry(selectedCountry);
-    closeCountryModal();
-  };
-
   const selectLanguage = (selectedLanguage) => {
     setLanguage(selectedLanguage);
     closeLanguageModal();
@@ -72,61 +52,46 @@ const RegisterScreen = () => {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      <View style={styles.languageContainer}>
-        <TouchableOpacity
-          style={styles.selectLanguageButton}
-          onPress={openLanguageModal}
-        >
-          {/* замінено ArrowLeft на SVG */}
-          <Svg
-            width={24}
-            height={24}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="black"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <Path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></Path>
-            <Path d="M10 11l-5-5 5-5"></Path>
-            <Path d="M19 6h-14"></Path>
-          </Svg>
-          <Text style={styles.selectLanguageText}>
-            {language ? `${language.emoji} ${language.name}` : "Мова"}
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.logoContainer}>
-        <View style={styles.logoPlaceholder} />
-      </View>
-      <Text style={styles.title}>Зареєструватися</Text>
-      <Text style={styles.subtitle}>
-        Почніть турботу про себе — з реєстрації
-      </Text>
+
       <TouchableOpacity
-        style={styles.selectCountryButton}
-        onPress={openCountryModal}
+        style={styles.selectLanguageButton}
+        onPress={openLanguageModal}
       >
-        <Text style={styles.selectCountryText}>
-          {country
-            ? `${country.emoji} ${country.name}`
-            : "Обрати країну проживання"}
+        <Svg
+          width={24}
+          height={24}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="black"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <Path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></Path>
+          <Path d="M10 11l-5-5 5-5"></Path>
+          <Path d="M19 6h-14"></Path>
+        </Svg>
+        <Text style={styles.selectLanguageText}>
+          {language ? `${language.emoji} ${language.name}` : "Мова"}
         </Text>
       </TouchableOpacity>
-      <Text style={styles.subtitle2}>Повне Ім’я</Text>
+
+      <Text style={styles.title}>Вхід</Text>
+      <Text style={styles.subtitle}>Почніть турботу про себе</Text>
+      <Text style={styles.subtitle2}>Телефон</Text>
       <View style={styles.inputContainer}>
         <Ionicons
-          name="person-outline"
+          name="call-outline"
           size={20}
           color="#B0BEC5"
           style={styles.icon}
         />
         <TextInput
           style={styles.input}
-          placeholder="Ведіть Ваше Ім'я"
-          value={fullName}
-          onChangeText={setFullName}
+          placeholder="Необов'язково"
+          value={phone}
+          onChangeText={setPhone}
+          keyboardType="phone-pad"
         />
       </View>
       <Text style={styles.subtitle2}>Пошта</Text>
@@ -145,66 +110,18 @@ const RegisterScreen = () => {
           keyboardType="email-address"
         />
       </View>
-      <Text style={styles.subtitle2}>Телефон</Text>
-      <View style={styles.inputContainer}>
-        <Ionicons
-          name="call-outline"
-          size={20}
-          color="#B0BEC5"
-          style={styles.icon}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Необов'язково"
-          value={phone}
-          onChangeText={setPhone}
-          keyboardType="phone-pad"
-        />
-      </View>
-      <TouchableOpacity
-        style={styles.registerButton}
-        onPress={handleRegistration}
-      >
-        <Text style={styles.registerButtonText}>Зареєструватися</Text>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <Text style={styles.loginButtonText}>Увійти</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.loginLink}
-        onPress={() => navigation.navigate("Login")} // Замініть "Login" на назву вашого екрану входу
+        onPress={() => navigation.navigate("Register")} // Замініть "Login" на назву вашого екрану входу
       >
         <Text style={styles.loginLinkText}>
           Вже зареєстровані?
           <Text style={{ fontWeight: "bold" }}> Увійти</Text>
         </Text>
       </TouchableOpacity>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isCountryModalVisible}
-        onRequestClose={closeCountryModal}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalTitle}>Виберіть країну</Text>
-            {countryFlags.map((item) => (
-              <TouchableOpacity
-                key={item.code}
-                style={styles.countryItem}
-                onPress={() => selectCountry(item)}
-              >
-                <Text style={styles.countryEmoji}>{item.emoji}</Text>
-                <Text style={styles.countryName}>{item.name}</Text>
-              </TouchableOpacity>
-            ))}
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={closeCountryModal}
-            >
-              <Text style={styles.textStyle}>Скасувати</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
       <Modal
         animationType="slide"
         transparent={true}
@@ -245,51 +162,21 @@ const styles = StyleSheet.create({
     paddingTop: 120,
     paddingHorizontal: 20,
   },
-
-  selectLangButton: {
-    flexDirection: "row",
+  logoContainer: {
+    marginBottom: 20,
+  },
+  logoPlaceholder: {
+    width: 80,
+    height: 40,
+    backgroundColor: "#ADD8E6",
+    borderRadius: 5,
+  },
+  languageContainer: {
     position: "absolute",
     top: 40,
     left: 20,
-    zIndex: 10, // Ensure the language button is above other elements
+    zIndex: 10,
     alignItems: "center",
-  },
-
-  title: {
-    fontSize: 32,
-    marginBottom: 9,
-    fontFamily: "Mont-Bold",
-    color: "#212121",
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#757575",
-    fontFamily: "Mont-Regular",
-    marginBottom: 14,
-  },
-  subtitle2: {
-    fontSize: 18,
-    alignSelf: "flex-start",
-    color: "#2A2A2A",
-    fontFamily: "Mont-Medium",
-    paddingHorizontal: 20,
-  },
-  selectCountryButton: {
-    backgroundColor: "rgba(14, 179, 235, 0.2)",
-    borderRadius: 555,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    width: 339,
-    height: 52,
-    alignItems: "center",
-    marginBottom: 15,
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  selectCountryText: {
-    color: "black",
-    fontSize: 16,
-    fontFamily: "Mont-Medium",
   },
   selectLanguageButton: {
     backgroundColor: "transparent",
@@ -309,6 +196,25 @@ const styles = StyleSheet.create({
     fontFamily: "Mont-Medium",
     marginLeft: 8,
   },
+  title: {
+    fontSize: 32,
+    marginBottom: 9,
+    fontFamily: "Mont-Bold",
+    color: "#212121",
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#757575",
+    fontFamily: "Mont-Regular",
+    marginBottom: 14,
+  },
+  subtitle2: {
+    fontSize: 18,
+    alignSelf: "flex-start",
+    color: "#2A2A2A",
+    fontFamily: "Mont-Medium",
+    paddingHorizontal: 20,
+  },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -327,7 +233,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Mont-Regular",
   },
-  registerButton: {
+  loginButton: {
     backgroundColor: "#0EB3EB",
     borderRadius: 555,
     paddingVertical: 15,
@@ -336,7 +242,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 8,
   },
-  registerButtonText: {
+  loginButtonText: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
@@ -346,7 +252,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Додано фон для затемнення
+    marginTop: 22,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalView: {
     margin: 20,
@@ -406,4 +313,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RegisterScreen;
+export default LoginScreen;
