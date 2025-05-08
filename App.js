@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import SplashScreen from "./screens/SplashScreen";
 import HomeScreen from "./screens/HomeScreen";
+import RegisterScreen from "./screens/RegisterScreen";
 import * as Font from "expo-font";
 
 const Stack = createStackNavigator();
@@ -26,10 +27,10 @@ const App = () => {
       } catch (error) {
         console.warn("Помилка завантаження шрифтів", error);
       } finally {
-        // Встановлюємо таймер на 5 секунд після (спроби) завантаження шрифтів
+        // Встановлюємо таймер на 1 секунду після (спроби) завантаження шрифтів
         setTimeout(() => {
           setIsLoading(false);
-        }, 70000);
+        }, 1000);
       }
     }
 
@@ -58,7 +59,10 @@ const App = () => {
           {isLoading ? (
             <Stack.Screen name="Splash" component={SplashScreen} />
           ) : (
-            <Stack.Screen name="Home" component={HomeScreen} />
+            <>
+              <Stack.Screen name="Home" component={HomeScreen} />
+              <Stack.Screen name="Register" component={RegisterScreen} />
+            </>
           )}
         </Stack.Navigator>
       </NavigationContainer>

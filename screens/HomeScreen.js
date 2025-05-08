@@ -17,12 +17,12 @@ const HomeScreen = () => {
 
   const handlePatientSelect = () => {
     console.log("Patient selected");
-    // navigation.navigate('Patient');
+    navigation.navigate('Register'); // Змінено на 'Register'
   };
 
   const handleDoctorSelect = () => {
     console.log("Doctor selected");
-    // navigation.navigate('Doctor');
+    // navigation.navigate('Doctor'); // Вам потрібно буде створити цей екран
   };
 
   const handlePrivacyPolicyToggle = () => {
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white", // Змінено колір фону на білий
   },
   logoContainer: {
-    marginTop: 30,
+    marginTop: 60,
 
     // backgroundColor: 'lightblue', // Для налагодження
   },
