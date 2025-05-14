@@ -17,12 +17,12 @@ const HomeScreen = () => {
 
   const handlePatientSelect = () => {
     console.log("Patient selected");
-    navigation.navigate('Register'); // Змінено на 'Register'
+    navigation.navigate("Register"); // Змінено на 'Register'
   };
 
   const handleDoctorSelect = () => {
     console.log("Doctor selected");
-    // navigation.navigate('Doctor'); // Вам потрібно буде створити цей екран
+    navigation.navigate("RegisterDoctor"); // Вам потрібно буде створити цей екран
   };
 
   const handlePrivacyPolicyToggle = () => {

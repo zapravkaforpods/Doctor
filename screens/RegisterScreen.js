@@ -7,13 +7,15 @@ import {
   TouchableOpacity,
   Modal,
   Pressable,
+  Alert,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-// import Arrow from "../assets/Main/arrow.svg"; // Corrected import
-// import { ArrowLeft } from 'lucide-react-native'; // Removed problematic import
-import { Svg, Path } from "react-native-svg"; // Added for custom SVG icon
+import { Svg, Path } from "react-native-svg";
+import { db } from "../firebaseConfig"; // Шлях до вашого файлу з ініціалізацією Firebase
+import { collection, addDoc } from "firebase/firestore";
+import { auth } from "../firebaseConfig"; // Імпорт об'єкта auth з вашого файлу конфігурації Firebase
 
 const countryFlags = [
   { name: "English", code: "gb", emoji: "🇬🇧" },
@@ -38,9 +40,44 @@ const RegisterScreen = () => {
   const [phone, setPhone] = useState("");
   const [language, setLanguage] = useState(languages[3]); // Default to Ukrainian
   const [isLanguageModalVisible, setIsLanguageModalVisible] = useState(false);
+  const [registrationError, setRegistrationError] = useState("");
+  const [isRegistering, setIsRegistering] = useState(false);
 
-  const handleRegistration = () => {
-    console.log("Реєстрація:", { country, fullName, email, phone, language });
+  const handleRegistration = async () => {
+    setRegistrationError("");
+    if (!fullName.trim()) {
+      setRegistrationError("Будь ласка, введіть ваше повне ім'я.");
+      return;
+    }
+    if (!email.trim()) {
+      setRegistrationError("Будь ласка, введіть вашу електронну пошту.");
+      return;
+    }
+
+    setIsRegistering(true);
+    try {
+      const registrationsCollectionRef = collection(db, "registrations");
+      await addDoc(registrationsCollectionRef, {
+        fullName: fullName,
+        email: email,
+        country: country ? country.name : null,
+        language: language ? language.name : null,
+        phone: phone.trim() || null,
+        registrationDate: new Date(),
+      });
+      Alert.alert("Успішно", "Вашу реєстрацію завершено!");
+      setFullName("");
+      setEmail("");
+      setPhone("");
+      setCountry(null);
+      setLanguage(languages[3]); // Скинути мову до укр. після успіху
+      // Можна додати перехід на інший екран тут, наприклад, navigation.navigate("HomeScreen");
+    } catch (error) {
+      console.error("Помилка реєстрації:", error);
+      setRegistrationError("Не вдалося завершити реєстрацію.");
+    } finally {
+      setIsRegistering(false);
+    }
   };
 
   const openCountryModal = () => {
@@ -77,7 +114,6 @@ const RegisterScreen = () => {
           style={styles.selectLanguageButton}
           onPress={openLanguageModal}
         >
-          {/* замінено ArrowLeft на SVG */}
           <Svg
             width={24}
             height={24}
@@ -143,6 +179,7 @@ const RegisterScreen = () => {
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
+          autoCapitalize="none"
         />
       </View>
       <Text style={styles.subtitle2}>Телефон</Text>
@@ -161,11 +198,17 @@ const RegisterScreen = () => {
           keyboardType="phone-pad"
         />
       </View>
+      {registrationError ? (
+        <Text style={styles.errorText}>{registrationError}</Text>
+      ) : null}
       <TouchableOpacity
         style={styles.registerButton}
         onPress={handleRegistration}
+        disabled={isRegistering}
       >
-        <Text style={styles.registerButtonText}>Зареєструватися</Text>
+        <Text style={styles.registerButtonText}>
+          {isRegistering ? "Реєстрація..." : "Зареєструватися"}
+        </Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.loginLink}
@@ -245,16 +288,14 @@ const styles = StyleSheet.create({
     paddingTop: 120,
     paddingHorizontal: 20,
   },
-
-  selectLangButton: {
+  languageContainer: {
     flexDirection: "row",
     position: "absolute",
     top: 40,
     left: 20,
-    zIndex: 10, // Ensure the language button is above other elements
+    zIndex: 10,
     alignItems: "center",
   },
-
   title: {
     fontSize: 32,
     marginBottom: 9,
@@ -346,7 +387,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Додано фон для затемнення
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalView: {
     margin: 20,
@@ -403,6 +444,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#757575",
     fontFamily: "Mont-Regular",
+  },
+  errorText: {
+    color: "red",
+    marginBottom: 10,
+    textAlign: "center",
   },
 });
 
