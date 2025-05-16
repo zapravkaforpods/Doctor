@@ -1,0 +1,11 @@
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, id:5FD482F6-6F66-4CAA-A505-06904DDF22FD, OS:18.3.1, name:iPhone 16 Pro }
+{ platform:iOS Simulator, id:5FD482F6-6F66-4CAA-A505-06904DDF22FD, OS:18.3.1, name:iPhone 16 Pro }
+** BUILD FAILED **
+
+
+The following build commands failed:
+	ScanDependencies /Users/kisuk/Library/Developer/Xcode/DerivedData/Doctor-eizuvbjxxpothqeilynfijjmnyik/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/gRPC-C++.build/Objects-normal/arm64/gRPC-C++-dummy.o /Users/kisuk/Doctor/ios/Pods/Target\ Support\ Files/gRPC-C++/gRPC-C++-dummy.m normal arm64 objective-c com.apple.compilers.llvm.clang.1_0.compiler (in target 'gRPC-C++' from project 'Pods')
+	SwiftEmitModule normal arm64 Emitting\ module\ for\ FirebaseCoreInternal (in target 'FirebaseCoreInternal' from project 'Pods')
+	Building workspace Doctor with scheme Doctor and configuration Debug
+(3 failures)

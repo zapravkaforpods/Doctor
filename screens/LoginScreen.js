@@ -7,11 +7,13 @@ import {
   TouchableOpacity,
   Modal,
   Pressable,
+  Alert,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Svg, Path } from "react-native-svg";
+import auth from "@react-native-firebase/auth"; // Імпорт auth з @react-native-firebase/auth
 
 const languages = [
   { name: "English", code: "en", emoji: "🇬🇧" },
@@ -24,16 +26,40 @@ const LoginScreen = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const [language, setLanguage] = useState(languages[3]); // Default to Ukrainian
   const [isLanguageModalVisible, setIsLanguageModalVisible] = useState(false);
 
-  const handleLogin = () => {
-    console.log("Вхід:", { email, password, language });
-    // Тут має бути логіка для відправки даних на сервер і обробки відповіді
-    // Після успішного входу, наприклад, можна перенаправити користувача на інший екран
-    // navigation.navigate("Profile");
+  const handleLogin = async () => {
+    setLoginError("");
+    if (!email.trim() || !password.trim()) {
+      setLoginError("Будь ласка, введіть електронну пошту та пароль.");
+      return;
+    }
+
+    setIsLoggingIn(true);
+    try {
+      const userCredential = await auth().signInWithEmailAndPassword(
+        email,
+        password
+      );
+      console.log("Успішний вхід:", userCredential.user);
+      // Після успішного входу перенаправте користувача
+      navigation.navigate("Home"); // Замініть "Home" на назву вашого головного екрану
+    } catch (error) {
+      console.error("Помилка входу:", error);
+      let errorMessage = "Невірні облікові дані.";
+      if (error.code === "auth/user-not-found") {
+        errorMessage = "Користувача з такою електронною поштою не знайдено.";
+      } else if (error.code === "auth/wrong-password") {
+        errorMessage = "Невірний пароль.";
+      }
+      setLoginError(errorMessage);
+    } finally {
+      setIsLoggingIn(false);
+    }
   };
 
   const openLanguageModal = () => {
@@ -53,48 +79,38 @@ const LoginScreen = () => {
     <View style={styles.container}>
       <StatusBar style="auto" />
 
-      <TouchableOpacity
-        style={styles.selectLanguageButton}
-        onPress={openLanguageModal}
-      >
-        <Svg
-          width={24}
-          height={24}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="black"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+      <View style={styles.languageContainer}>
+        <TouchableOpacity
+          style={styles.selectLanguageButton}
+          onPress={openLanguageModal}
         >
-          <Path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></Path>
-          <Path d="M10 11l-5-5 5-5"></Path>
-          <Path d="M19 6h-14"></Path>
-        </Svg>
-        <Text style={styles.selectLanguageText}>
-          {language ? `${language.emoji} ${language.name}` : "Мова"}
-        </Text>
-      </TouchableOpacity>
+          <Svg
+            width={24}
+            height={24}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="black"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <Path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></Path>
+            <Path d="M10 11l-5-5 5-5"></Path>
+            <Path d="M19 6h-14"></Path>
+          </Svg>
+          <Text style={styles.selectLanguageText}>
+            {language ? `${language.emoji} ${language.name}` : "Мова"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.logoContainer}>
+        <View style={styles.logoPlaceholder} />
+      </View>
 
       <Text style={styles.title}>Вхід</Text>
       <Text style={styles.subtitle}>Почніть турботу про себе</Text>
-      <Text style={styles.subtitle2}>Телефон</Text>
-      <View style={styles.inputContainer}>
-        <Ionicons
-          name="call-outline"
-          size={20}
-          color="#B0BEC5"
-          style={styles.icon}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Необов'язково"
-          value={phone}
-          onChangeText={setPhone}
-          keyboardType="phone-pad"
-        />
-      </View>
-      <Text style={styles.subtitle2}>Пошта</Text>
+      <Text style={styles.subtitle2}>Електронна пошта</Text>
       <View style={styles.inputContainer}>
         <Ionicons
           name="mail-outline"
@@ -110,16 +126,39 @@ const LoginScreen = () => {
           keyboardType="email-address"
         />
       </View>
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.loginButtonText}>Увійти</Text>
+      <Text style={styles.subtitle2}>Пароль</Text>
+      <View style={styles.inputContainer}>
+        <Ionicons
+          name="lock-closed-outline"
+          size={20}
+          color="#B0BEC5"
+          style={styles.icon}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Ведіть Ваш пароль"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={true}
+        />
+      </View>
+      {loginError ? <Text style={styles.errorText}>{loginError}</Text> : null}
+      <TouchableOpacity
+        style={styles.loginButton}
+        onPress={handleLogin}
+        disabled={isLoggingIn}
+      >
+        <Text style={styles.loginButtonText}>
+          {isLoggingIn ? "Вхід..." : "Увійти"}
+        </Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.loginLink}
-        onPress={() => navigation.navigate("Register")} // Замініть "Login" на назву вашого екрану входу
+        onPress={() => navigation.navigate("Register")}
       >
         <Text style={styles.loginLinkText}>
-          Вже зареєстровані?
-          <Text style={{ fontWeight: "bold" }}> Увійти</Text>
+          Не зареєстровані?
+          <Text style={{ fontWeight: "bold" }}> Зареєструватися</Text>
         </Text>
       </TouchableOpacity>
       <Modal
@@ -162,21 +201,32 @@ const styles = StyleSheet.create({
     paddingTop: 120,
     paddingHorizontal: 20,
   },
-  logoContainer: {
-    marginBottom: 20,
-  },
-  logoPlaceholder: {
-    width: 80,
-    height: 40,
-    backgroundColor: "#ADD8E6",
-    borderRadius: 5,
-  },
   languageContainer: {
+    flexDirection: "row",
     position: "absolute",
     top: 40,
     left: 20,
     zIndex: 10,
     alignItems: "center",
+  },
+  title: {
+    fontSize: 32,
+    marginBottom: 9,
+    fontFamily: "Mont-Bold",
+    color: "#212121",
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#757575",
+    fontFamily: "Mont-Regular",
+    marginBottom: 60,
+  },
+  subtitle2: {
+    fontSize: 18,
+    alignSelf: "flex-start",
+    color: "#2A2A2A",
+    fontFamily: "Mont-Medium",
+    paddingHorizontal: 20,
   },
   selectLanguageButton: {
     backgroundColor: "transparent",
@@ -195,25 +245,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Mont-Medium",
     marginLeft: 8,
-  },
-  title: {
-    fontSize: 32,
-    marginBottom: 9,
-    fontFamily: "Mont-Bold",
-    color: "#212121",
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#757575",
-    fontFamily: "Mont-Regular",
-    marginBottom: 14,
-  },
-  subtitle2: {
-    fontSize: 18,
-    alignSelf: "flex-start",
-    color: "#2A2A2A",
-    fontFamily: "Mont-Medium",
-    paddingHorizontal: 20,
   },
   inputContainer: {
     flexDirection: "row",
@@ -252,7 +283,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalView: {
@@ -303,13 +333,25 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
-  loginLink: {
-    marginTop: 16,
-  },
+  loginLink: { marginTop: 16 },
   loginLinkText: {
     fontSize: 16,
     color: "#757575",
     fontFamily: "Mont-Regular",
+  },
+  errorText: {
+    color: "red",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  logoContainer: {
+    marginBottom: 20,
+  },
+  logoPlaceholder: {
+    width: 190,
+    height: 190,
+    backgroundColor: "#0EB3EB",
+    borderRadius: 95,
   },
 });
 

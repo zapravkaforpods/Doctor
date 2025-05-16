@@ -1,21 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import firebase from "@react-native-firebase/app";
 import auth from "@react-native-firebase/auth";
-import { firebaseConfig } from "./firebaseConfig"; // Переконайтеся, що шлях правильний
 import HomeScreen from "./screens/HomeScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import RegisterDoctor from "./screens/RegisterDoctor";
 import LoginScreen from "./screens/LoginScreen";
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-
 const Stack = createStackNavigator();
 
 const App = () => {
+  useEffect(() => {
+    // Ініціалізація Firebase App (якщо ще не ініціалізовано)
+    if (!firebase.apps.length) {
+      firebase.initializeApp({}); // Передаємо пустий об'єкт, оскільки конфігурація підтягується з google-services.json
+      console.log("Firebase App ініціалізовано");
+    }
+  }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator>

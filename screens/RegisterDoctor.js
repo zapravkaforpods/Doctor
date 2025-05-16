@@ -13,9 +13,9 @@ import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Svg, Path } from "react-native-svg";
-import { db, auth } from "../firebaseConfig"; // Імпортуємо auth
+import { db } from "../firebaseConfig";
 import { collection, addDoc } from "firebase/firestore";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import auth from "@react-native-firebase/auth";
 
 const countryFlags = [
   { name: "English", code: "gb", emoji: "🇬🇧" },
@@ -37,9 +37,9 @@ const RegisterDoctor = () => {
   const [isCountryModalVisible, setIsCountryModalVisible] = useState(false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState(""); // Нове поле для пароля
+  const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
-  const [language, setLanguage] = useState(languages[3]); // Default to Ukrainian
+  const [language, setLanguage] = useState(languages[3]);
   const [isLanguageModalVisible, setIsLanguageModalVisible] = useState(false);
   const [registrationError, setRegistrationError] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
@@ -65,15 +65,12 @@ const RegisterDoctor = () => {
 
     setIsRegistering(true);
     try {
-      // Створення користувача в Firebase Authentication
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
+      const userCredential = await auth().createUserWithEmailAndPassword(
         email,
         password
       );
       const user = userCredential.user;
 
-      // Збереження додаткової інформації про користувача в окремій колекції "users"
       const usersCollectionRef = collection(db, "registration_doctor");
       await addDoc(usersCollectionRef, {
         uid: user.uid,
@@ -88,11 +85,11 @@ const RegisterDoctor = () => {
       Alert.alert("Успішно", "Вашу реєстрацію завершено!");
       setFullName("");
       setEmail("");
-      setPassword(""); // Очистити поле пароля після успішної реєстрації
+      setPassword("");
       setPhone("");
       setCountry(null);
-      setLanguage(languages[3]); // Скинути мову до укр. після успіху
-      navigation.navigate("Home"); // Перехід на головний екран після успішної реєстрації
+      setLanguage(languages[3]);
+      navigation.navigate("Home");
     } catch (error) {
       console.error("Помилка реєстрації:", error);
       let errorMessage = "Не вдалося завершити реєстрацію.";
@@ -211,7 +208,6 @@ const RegisterDoctor = () => {
           autoCapitalize="none"
         />
       </View>
-      {/* Нове поле для пароля */}
       <Text style={styles.subtitle2}>Пароль</Text>
       <View style={styles.inputContainer}>
         <Ionicons
@@ -225,7 +221,7 @@ const RegisterDoctor = () => {
           placeholder="Ведіть Ваш пароль"
           value={password}
           onChangeText={setPassword}
-          secureTextEntry={true} // Для приховування введеного пароля
+          secureTextEntry={true}
         />
       </View>
       <Text style={styles.subtitle2}>Телефон</Text>
@@ -258,7 +254,7 @@ const RegisterDoctor = () => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.loginLink}
-        onPress={() => navigation.navigate("Login")} // Замініть "Login" на назву вашого екрану входу
+        onPress={() => navigation.navigate("Login")}
       >
         <Text style={styles.loginLinkText}>
           Вже зареєстровані?
