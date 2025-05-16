@@ -7,7 +7,6 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "edgeToEdgeEnabled": true,
     "splash": {
       "image": "./assets/icon.png",
       "resizeMode": "contain",

@@ -13,9 +13,29 @@ import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Svg, Path } from "react-native-svg";
-import { db } from "../firebaseConfig";
-import { collection, addDoc } from "firebase/firestore";
-import auth from "@react-native-firebase/auth";
+// Import initializeApp and initialize Firebase app
+// import { initializeApp } from 'firebase/app';
+// Import getFirestore and related functions from firebase/firestore
+// import { getFirestore, collection, addDoc } from "firebase/firestore";
+// import auth from "@react-native-firebase/auth";
+
+// Firebase configuration (replace with your actual config)
+// const firebaseConfig = {
+//  apiKey: "AIzaSyAret2P2cGoGUMVYESBAxpd2M5E2PzZwzY",
+//  authDomain: "doctorplus-41a69.firebaseapp.com",
+//  projectId: "doctorplus-41a69",
+//  storageBucket: "doctorplus-41a69.firebasestorage.app",
+//  messagingSenderId: "623603887567",
+//  appId: "1:623603887567:web:608104214322abddfe36ba",
+//  measurementId: "G-SMF45Q1KF4"
+// };
+
+
+// Initialize Firebase (only once in your app)
+// const app = initializeApp(firebaseConfig);
+
+// Initialize Firestore
+// export const db = getFirestore(app);
 
 const countryFlags = [
   { name: "English", code: "gb", emoji: "🇬🇧" },
@@ -64,46 +84,46 @@ const RegisterDoctor = () => {
     }
 
     setIsRegistering(true);
-    try {
-      const userCredential = await auth().createUserWithEmailAndPassword(
-        email,
-        password
-      );
-      const user = userCredential.user;
+    // try {
+    //   const userCredential = await auth().createUserWithEmailAndPassword(
+    //     email,
+    //     password
+    //   );
+    //   const user = userCredential.user;
 
-      const usersCollectionRef = collection(db, "registration_doctor");
-      await addDoc(usersCollectionRef, {
-        uid: user.uid,
-        fullName: fullName,
-        email: email,
-        country: country ? country.name : null,
-        language: language ? language.name : null,
-        phone: phone.trim() || null,
-        registrationDate: new Date(),
-      });
+    //   const usersCollectionRef = collection(db, "registration_doctor");
+    //   await addDoc(usersCollectionRef, {
+    //     uid: user.uid,
+    //     fullName: fullName,
+    //     email: email,
+    //     country: country ? country.name : null,
+    //     language: language ? language.name : null,
+    //     phone: phone.trim() || null,
+    //     registrationDate: new Date(),
+    //   });
 
-      Alert.alert("Успішно", "Вашу реєстрацію завершено!");
-      setFullName("");
-      setEmail("");
-      setPassword("");
-      setPhone("");
-      setCountry(null);
-      setLanguage(languages[3]);
-      navigation.navigate("Home");
-    } catch (error) {
-      console.error("Помилка реєстрації:", error);
-      let errorMessage = "Не вдалося завершити реєстрацію.";
-      if (error.code === "auth/email-already-in-use") {
-        errorMessage = "Ця електронна пошта вже використовується.";
-      } else if (error.code === "auth/invalid-email") {
-        errorMessage = "Недійсна електронна пошта.";
-      } else if (error.code === "auth/weak-password") {
-        errorMessage = "Пароль занадто слабкий.";
-      }
-      setRegistrationError(errorMessage);
-    } finally {
-      setIsRegistering(false);
-    }
+    Alert.alert("Успішно", "Вашу реєстрацію буде завершено!");
+    setFullName("");
+    setEmail("");
+    setPassword("");
+    setPhone("");
+    setCountry(null);
+    setLanguage(languages[3]);
+    navigation.navigate("Home");
+    // } catch (error) {
+    //   console.error("Помилка реєстрації:", error);
+    //   let errorMessage = "Не вдалося завершити реєстрацію.";
+    //   if (error.code === "auth/email-already-in-use") {
+    //     errorMessage = "Ця електронна пошта вже використовується.";
+    //   } else if (error.code === "auth/invalid-email") {
+    //     errorMessage = "Недійсна електронна пошта.";
+    //   } else if (error.code === "auth/weak-password") {
+    //     errorMessage = "Пароль занадто слабкий.";
+    //   }
+    //   setRegistrationError(errorMessage);
+    // } finally {
+    setIsRegistering(false);
+    // }
   };
 
   const openCountryModal = () => {
@@ -453,8 +473,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   countryItem: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirectionalignItems: "center",
     paddingVertical: 10,
     width: "100%",
   },
@@ -479,16 +498,33 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
-  loginLink: { marginTop: 16 },
-  loginLinkText: {
-    fontSize: 16,
-    color: "#757575",
-    fontFamily: "Mont-Regular",
+  logoContainer: {
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    backgroundColor: "#0EB3EB",
+    marginBottom: 25,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  logoPlaceholder: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "#fff",
   },
   errorText: {
     color: "red",
     marginBottom: 10,
-    textAlign: "center",
+    textAlign: 'center'
+  },
+  loginLink: {
+    marginTop: 16,
+  },
+  loginLinkText: {
+    fontSize: 16,
+    color: "#757575",
+    fontFamily: "Mont-Regular",
   },
 });
 

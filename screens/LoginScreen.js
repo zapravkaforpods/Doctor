@@ -13,8 +13,22 @@ import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Svg, Path } from "react-native-svg";
-import auth from "@react-native-firebase/auth"; // Імпорт auth з @react-native-firebase/auth
+// import auth from "@react-native-firebase/auth"; // Імпорт auth з @react-native-firebase/auth
+// import { initializeApp, getApps } from 'firebase/app';
 
+// const firebaseConfig = {
+//  apiKey: "AIzaSyAret2P2cGoGUMVYESBAxpd2M5E2PzZwzY",
+//  authDomain: "doctorplus-41a69.firebaseapp.com",
+//  projectId: "doctorplus-41a69",
+//  storageBucket: "doctorplus-41a69.firebasestorage.app",
+//  messagingSenderId: "623603887567",
+//  appId: "1:623603887567:web:608104214322abddfe36ba",
+//  measurementId: "G-SMF45Q1KF4"
+// };
+
+// if (!getApps().length) {
+//  initializeApp(firebaseConfig);
+// }
 const languages = [
   { name: "English", code: "en", emoji: "🇬🇧" },
   { name: "Deutsch", code: "de", emoji: "🇩🇪" },
@@ -40,26 +54,26 @@ const LoginScreen = () => {
     }
 
     setIsLoggingIn(true);
-    try {
-      const userCredential = await auth().signInWithEmailAndPassword(
-        email,
-        password
-      );
-      console.log("Успішний вхід:", userCredential.user);
-      // Після успішного входу перенаправте користувача
-      navigation.navigate("Home"); // Замініть "Home" на назву вашого головного екрану
-    } catch (error) {
-      console.error("Помилка входу:", error);
-      let errorMessage = "Невірні облікові дані.";
-      if (error.code === "auth/user-not-found") {
-        errorMessage = "Користувача з такою електронною поштою не знайдено.";
-      } else if (error.code === "auth/wrong-password") {
-        errorMessage = "Невірний пароль.";
-      }
-      setLoginError(errorMessage);
-    } finally {
+    // try {
+    //   const userCredential = await auth().signInWithEmailAndPassword(
+    //     email,
+    //     password
+    //   );
+    //   console.log("Успішний вхід:", userCredential.user);
+    //   // Після успішного входу перенаправте користувача
+    //   navigation.navigate("Home"); // Замініть "Home" на назву вашого головного екрану
+    // } catch (error) {
+    //   console.error("Помилка входу:", error);
+    //   let errorMessage = "Невірні облікові дані.";
+    //   if (error.code === "auth/user-not-found") {
+    //     errorMessage = "Користувача з такою електронною поштою не знайдено.";
+    //   } else if (error.code === "auth/wrong-password") {
+    //     errorMessage = "Невірний пароль.";
+    //   }
+    //   setLoginError(errorMessage);
+    // } finally {
       setIsLoggingIn(false);
-    }
+    // }
   };
 
   const openLanguageModal = () => {
